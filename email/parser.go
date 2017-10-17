@@ -7,7 +7,6 @@ package email
 import (
 	"bufio"
 	"bytes"
-	"encoding/base64"
 	"fmt"
 	"io"
 	"io/ioutil"
@@ -16,6 +15,8 @@ import (
 	"mime/quotedprintable"
 	"net/mail"
 	"strings"
+
+	"github.com/myfreeweb/go-base64-simd/base64"
 )
 
 // ParseMessage parses and returns a Message from an io.Reader

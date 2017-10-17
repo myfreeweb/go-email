@@ -10,11 +10,12 @@ package email
 
 import (
 	"bytes"
-	"encoding/base64"
 	"fmt"
 	"io"
 	"mime/quotedprintable"
 	"strings"
+
+	"github.com/myfreeweb/go-base64-simd/base64"
 )
 
 const (

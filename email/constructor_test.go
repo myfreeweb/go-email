@@ -7,7 +7,6 @@ package email
 import (
 	"bufio"
 	"bytes"
-	"encoding/base64"
 	"encoding/hex"
 	"io"
 	"io/ioutil"
@@ -17,6 +16,8 @@ import (
 	"reflect"
 	"strings"
 	"testing"
+
+	"github.com/myfreeweb/go-base64-simd/base64"
 )
 
 // TestBasicEmailCreation ...
