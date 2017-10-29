@@ -12,18 +12,14 @@ import (
 	"io/ioutil"
 	"mime"
 	"mime/multipart"
-	"mime/quotedprintable"
 	"net/mail"
 	"strings"
-
-	"github.com/myfreeweb/go-base64-simd/base64"
 )
 
 // ParseMessage parses and returns a Message from an io.Reader
 // containing the raw text of an email message.
 // (If the raw email is a string or []byte, use strings.NewReader()
 // or bytes.NewReader() to create a reader.)
-// Any "quoted-printable" or "base64" encoded bodies will be decoded.
 func ParseMessage(r io.Reader) (*Message, error) {
 	msg, err := mail.ReadMessage(&leftTrimReader{r: bufioReader(r)})
 	if err != nil {
@@ -36,10 +32,9 @@ func ParseMessage(r io.Reader) (*Message, error) {
 // Header, and an io.Reader containing the raw text of the body/payload.
 // (If the raw body is a string or []byte, use strings.NewReader()
 // or bytes.NewReader() to create a reader.)
-// Any "quoted-printable" or "base64" encoded bodies will be decoded.
 func parseMessageWithHeader(headers Header, bodyReader io.Reader) (*Message, error) {
 
-	bufferedReader := contentReader(headers, bodyReader)
+	bufferedReader := bufioReader(bodyReader)
 
 	var err error
 	var mediaType string
@@ -170,17 +165,4 @@ func (r *preambleReader) Read(p []byte) (int, error) {
 		return n, err
 	}
 	return n, io.EOF
-}
-
-// contentReader ...
-func contentReader(headers Header, bodyReader io.Reader) *bufio.Reader {
-	if headers.Get("Content-Transfer-Encoding") == "quoted-printable" {
-		headers.Del("Content-Transfer-Encoding")
-		return bufioReader(quotedprintable.NewReader(bodyReader))
-	}
-	if headers.Get("Content-Transfer-Encoding") == "base64" {
-		headers.Del("Content-Transfer-Encoding")
-		return bufioReader(base64.NewDecoder(base64.StdEncoding, bodyReader))
-	}
-	return bufioReader(bodyReader)
 }

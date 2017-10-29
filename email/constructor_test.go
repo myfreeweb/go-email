@@ -16,8 +16,6 @@ import (
 	"reflect"
 	"strings"
 	"testing"
-
-	"github.com/myfreeweb/go-base64-simd/base64"
 )
 
 // TestBasicEmailCreation ...
@@ -394,14 +392,7 @@ func testMultipartRelatedWithStdLib(t *testing.T, originalPart *Message, stdlibR
 
 func testBodyPartWithStdLib(t *testing.T, originalPart *Message, stdlibPart *multipart.Part) {
 
-	// decode base64 if exists
-	var stdlibPartBodyReader io.Reader
-	if stdlibPart.Header.Get("Content-Transfer-Encoding") == "base64" {
-		stdlibPart.Header.Del("Content-Transfer-Encoding")
-		stdlibPartBodyReader = base64.NewDecoder(base64.StdEncoding, stdlibPart)
-	} else {
-		stdlibPartBodyReader = stdlibPart
-	}
+	stdlibPartBodyReader := stdlibPart
 
 	// confirm stdlib headers match our headers
 	if !reflect.DeepEqual(map[string][]string(originalPart.Header), map[string][]string(stdlibPart.Header)) {
